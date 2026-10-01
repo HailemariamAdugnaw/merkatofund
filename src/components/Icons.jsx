@@ -1,21 +1,14 @@
 export function LogoMark(props) {
   return (
-    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-      <defs>
-        <linearGradient id="merkatoGold" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#FFE066" />
-          <stop offset="0.5" stopColor="#FFD700" />
-          <stop offset="1" stopColor="#FFA500" />
-        </linearGradient>
-      </defs>
-      <circle cx="24" cy="24" r="21" fill="url(#merkatoGold)" />
-      <circle cx="24" cy="24" r="17" fill="none" stroke="#3E2723" strokeOpacity="0.25" strokeWidth="1.5" />
-      <path d="M13 31V17.5L19 26L24 17.5L29 26L35 17.5V31" stroke="#3E2723" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-      <path d="M15 35.5C20 33.5 28 33.5 33 35.5" stroke="#3E2723" strokeOpacity="0.55" strokeWidth="2" strokeLinecap="round" />
-    </svg>
+    <img 
+      src="/logo.jpg" 
+      alt="Logo" 
+      width="48" 
+      height="48" 
+      {...props} 
+    />
   )
 }
-
 export function FacebookIcon(props) {
   return (
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props}>
