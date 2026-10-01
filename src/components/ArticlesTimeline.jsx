@@ -21,7 +21,6 @@ export default function ArticlesTimeline({ articles }) {
                 {article.order}
               </span>
               <article className="article-card">
-                <p className="article-category">{article.category || `Article ${article.order}`}</p>
                 <h3 className="article-title">{article.title}</h3>
                 <p className="article-subtitle">{article.subtitle}</p>
                 {Array.isArray(article.paragraphs) &&
