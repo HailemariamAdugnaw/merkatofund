@@ -514,6 +514,7 @@ export interface ApiHeroSlideHeroSlide extends Struct.CollectionTypeSchema {
     cta2_label: Schema.Attribute.String;
     eyebrow: Schema.Attribute.String;
     heading: Schema.Attribute.String & Schema.Attribute.Required;
+    image: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
