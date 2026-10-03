@@ -84,18 +84,38 @@
 
 .timeline-item {
   position: relative;
-  width: 50%;
-  padding: 0 52px 62px 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  column-gap: 96px;
+  padding: 0 0 62px;
 }
 
-.timeline-item.align-right {
-  margin-left: 50%;
-  padding: 0 0 62px 52px;
+.timeline-item .article-card {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.timeline-item .article-visual {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.timeline-item.align-right .article-card {
+  grid-column: 2;
+}
+
+.timeline-item.align-right .article-visual {
+  grid-column: 1;
+  grid-row: 1;
 }
 
 .timeline-node {
   position: absolute;
   top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 52px;
   height: 52px;
   border-radius: 50%;
@@ -108,16 +128,7 @@
   color: var(--coffee);
   background: linear-gradient(135deg, #ffe066, #ffd700 45%, #ffa500);
   box-shadow: 0 0 0 7px var(--parchment), 0 12px 26px -10px rgba(255, 165, 0, 0.7);
-}
-
-.timeline-item.align-left .timeline-node {
-  right: -26px;
-  transform: translateX(50%);
-}
-
-.timeline-item.align-right .timeline-node {
-  left: -26px;
-  transform: translateX(-50%);
+  z-index: 1;
 }
 
 .article-card {
@@ -182,6 +193,33 @@
   font-style: italic;
   font-size: 1.04rem;
   color: var(--coffee);
+}
+
+.article-visual {
+  margin: 0;
+  width: 100%;
+}
+
+.article-visual-frame {
+  padding: 10px;
+  border-radius: 24px;
+  background: linear-gradient(140deg, rgba(255, 215, 0, 0.9), rgba(255, 165, 0, 0.35));
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.article-visual-frame img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 16px;
+  background: var(--parchment-soft);
+}
+
+.timeline-item:hover .article-visual-frame {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lift);
 }
 
 .video-section {
@@ -489,15 +527,22 @@
 
   .timeline-item,
   .timeline-item.align-right {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
     width: 100%;
     margin-left: 0;
     padding: 0 0 52px 68px;
   }
 
-  .timeline-item.align-left .timeline-node,
-  .timeline-item.align-right .timeline-node {
+  .article-visual {
+    order: -1;
+    max-width: 440px;
+  }
+
+  .timeline-node {
     left: 0;
-    right: auto;
     transform: translateX(0);
   }
 

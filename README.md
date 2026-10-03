@@ -2,8 +2,9 @@
 
 The official website of **The Merkato Fund**, the "Hybrid Financial Ecosystem for Everyday Ethiopia", built as a production-grade full-stack application.
 
-- **5 Million Birr Daily Liquidity** presented through an animated hero slider and infographic
-- Seven editorial articles rendered as a golden vertical timeline
+- **5 Million Birr Daily Liquidity** presented through a full-screen cinematic hero slider: Ken Burns zoom on every background photo, staggered text reveal (eyebrow → title → body → buttons → stat chip), 6-second autoplay with a thin progress bar (hover pauses), and four navigation options (arrows, pill dots, keyboard arrows, touch swipe) plus a `01 / 03` slide counter. The background photo always stays locked to the hero container at every screen size — full-bleed behind the text on desktops, and on phones and tablets the crop, overlay strength and spacing adapt automatically so the picture remains visible while the text stays readable
+- Seven editorial articles rendered as a golden vertical timeline in a zig-zag split layout — every article card is paired with a companion image on the opposite side, so no half of the screen is ever empty
+- **Media uploads in Strapi**: hero slide and article photos can be uploaded from the local device or picked from the Media Library
 - Click-to-play video explainer section
 - Contact form with database persistence
 - Floating social dock + footer social bar (Facebook, Telegram, TikTok, Instagram)
@@ -180,7 +181,7 @@ Log in at `http://localhost:1337/admin` (or `https://your-strapi-url.onrender.co
    - **Nav label** — the short name shown in the top navigation bar.
    - **Highlight** — the golden pull-quote under the article.
    - **Body** — the article text. Write paragraphs separated by **one empty line**; each paragraph becomes its own styled block on the website.
-4. Click **Save**, then click **Publish**. Changes appear on the website within ~2 minutes (or instantly after a forced sync).
+4. Click **Save**, then click **Publish**. Changes appear on the website instantly when the webhook below is configured (otherwise within ~2 minutes, or right after a forced sync).
 
 > Changing the **Order** number re-positions the article in the timeline and navigation. Keep numbers 1–7 unique.
 
@@ -190,10 +191,16 @@ Log in at `http://localhost:1337/admin` (or `https://your-strapi-url.onrender.co
 2. Edit any field:
    - **Eyebrow / Heading / Accent** — the top banner text.
    - **Body** — the paragraph under the heading.
-   - **Image** — the photo shown on the right of the slide. Use a path that exists on the site, e.g. `/images/image1.jpg`, `/images/image2.jpg`, `/images/image3.jpg`, or a full image URL. Leave it empty to fall back to the slide's default picture.
-   - **Stat value / Stat label** — the gold chip under the photo (e.g. `5M` / `Birr Daily Liquidity`).
+   - **Image** — the slide photo (slow Ken Burns zoom is applied automatically). Click the field and either **pick a picture from the Media Library** or **drag-and-drop / upload a new one from your computer**. Leave it empty to fall back to the slide's default picture. Landscape images around 1280×720 or larger work best. The photo always fills the hero container edge-to-edge — on desktops it is gently darkened on the left for the text, and on phones and tablets the overlay is rebalanced so both the picture and the message stay readable at small sizes.
+   - **Stat value / Stat label** — the gold chip under the text (e.g. `5M` / `Birr Daily Liquidity`).
    - **CTA labels / links** — the two buttons.
-3. **Save** → **Publish**. Changes appear on the website within ~2 minutes (or instantly after a forced sync).
+3. **Save** → **Publish**. Changes appear instantly with the webhook configured (otherwise within ~2 minutes).
+
+### 5.1c Add or change an article photo (timeline)
+
+1. **Content Manager → Article** — open any of the seven articles.
+2. Scroll to the **Image** field and upload a picture from your computer or pick one from the **Media Library**.
+3. **Save** → **Publish**. The picture appears next to the article card in the timeline — on the opposite side of the text, alternating row by row. Articles without a picture fall back to the built-in brand infographics.
 
 ### 5.2 Update social links (floating icons + footer bar)
 
@@ -219,6 +226,30 @@ Public read access is intentionally open (the website needs it). To additionally
 1. **Settings → API Tokens → Create new API Token** (type: *Read-only*).
 2. Copy the token into the backend environment variable `STRAPI_API_TOKEN`.
 3. Restart the Django service. Requests from Django to Strapi are now authenticated.
+
+### 5.5 Publish, unpublish or delete content — and make it stick
+
+The website does not read Strapi directly. Content flows **Strapi → Django (sync) → website**, so every publish/unpublish/delete in Strapi must reach the Django copy. The sync engine keeps the two in sync with these rules:
+
+- **Unpublish** an entry (or delete it) → it is removed from the website at the next sync. Strapi is the source of truth: only entries that are published in Strapi stay on the site.
+- **Rename / re-order** an entry → the website updates the same entry (entries are tracked by their Strapi `documentId`, so no duplicates or leftovers appear).
+- **Safety guard**: if a sync finds a collection completely empty (zero published entries), it deliberately keeps the existing content — this protects the site from wiping everything when the CMS is misconfigured. Keep at least one entry published in each collection; if you truly want a collection empty, delete the leftover rows in Django admin.
+- **Seed content**: the built-in default articles/slides only exist while Strapi has never provided content; as soon as Strapi serves a collection, its entries replace the defaults.
+
+To make unpublish/delete propagate **instantly** (instead of waiting for the ~2 minute cache window), register a Strapi webhook:
+
+1. Generate a secret once, e.g. `openssl rand -hex 32`.
+2. Set it as the backend environment variable `STRAPI_WEBHOOK_SECRET` (already wired in `render.yaml`) and redeploy the backend.
+3. In Strapi: **Settings → Webhooks → Create new webhook**:
+   - **Name**: `Django content sync`
+   - **URL**: `https://<your-backend-domain>/api/webhooks/strapi`
+   - **Events**: tick *Entry create*, *Entry update*, *Entry publish*, *Entry unpublish*, *Entry delete*
+   - **Headers**: add `X-Strapi-Webhook-Secret` with the same secret value
+4. **Save**. Press **Trigger** on the webhook row — it should answer `200` with `{"status":"accepted"}`.
+
+From now on every save, publish, unpublish or delete in Strapi triggers an immediate forced sync, and the website reflects it within a couple of seconds.
+
+> The webhook endpoint rejects requests without the matching `X-Strapi-Webhook-Secret` header (401) and debounces bursts so rapid successive saves trigger a single sync.
 
 ## 6. Google Analytics 4
 
@@ -250,12 +281,21 @@ Beyond automatic pageviews, the site sends these GA4 events:
 | `contact_submit` | Contact form submitted | `status` (`success` / `error`) |
 | `social_click` | Floating / footer / contact social icon clicked | `network`, `location` |
 | `hero_cta` | Hero slider call-to-action clicked | `target` |
-| `hero_slide_change` | Slider arrows used | `direction` |
+| `hero_slide_change` | Slider navigated | `direction`, `method` (`arrow` / `dot` / `keyboard` / `swipe`) |
 | `nav_click` | Navigation link clicked | `target` |
 
 Every event is also mirrored to the Django `/api/events/` endpoint and stored in the `EngagementEvent` table (viewable in Django admin) — a privacy-friendly first-party record independent of Google.
 
-### 6.4 Verify
+### 6.4 Hero slider timing
+
+The slider advances every **6 seconds**. To change the pace, edit both of these (they must stay in sync):
+
+1. `AUTOPLAY_MS` at the top of `src/components/HeroSlider.jsx`
+2. the `6s` duration inside `.hero-progress-fill` in `src/styles/layout.css`
+
+Hovering the hero with a mouse pauses the countdown (the progress bar freezes and resumes in place). The Ken Burns zoom is the 8.5s `kenBurnsIn` / `kenBurnsOut` keyframes in `layout.css` — even-numbered slides zoom out for variety.
+
+### 6.5 Verify
 
 Open GA4 → **Reports → Realtime** in one tab, browse the site in another: active users, `article_read` and `social_click` events appear within seconds.
 
@@ -286,6 +326,7 @@ Open GA4 → **Reports → Realtime** in one tab, browse the site in another: ac
    - Copy the backend URL → set it as `VITE_API_BASE_URL` in Vercel → redeploy the frontend.
    - In `merkato-backend` → Environment → append your Vercel domain to `CORS_ALLOWED_ORIGINS` → Save & Deploy.
    - In `merkato-strapi` → Environment → set `CORS_ORIGIN` to your backend URL → Save & Deploy.
+   - Copy the generated `STRAPI_WEBHOOK_SECRET` from `merkato-backend` → Environment, then create the Strapi webhook described in **5.5** (URL: `https://merkato-backend.onrender.com/api/webhooks/strapi`).
 5. Open the Strapi dashboard URL, create the admin account, and the production CMS is live.
 
 > Render free-tier services sleep after ~15 minutes of inactivity; the first request afterwards takes ~30–60 seconds while they wake. Upgrade the plan for always-on production traffic.
@@ -333,6 +374,7 @@ Django already re-checks Strapi every 120 seconds on live traffic. To also pull 
 | `DATABASE_URL` | SQLite fallback | PostgreSQL connection string (Render injects it) |
 | `STRAPI_BASE_URL` | `http://localhost:1337` | CMS URL to sync from |
 | `STRAPI_API_TOKEN` | *(empty)* | Optional read token from Strapi |
+| `STRAPI_WEBHOOK_SECRET` | *(empty)* | Shared secret for Strapi → Django webhook; receiver is disabled while empty (see 5.5) |
 | `CONTENT_SYNC_TTL_SECONDS` | `120` | Cache window between Strapi pulls |
 | `STRAPI_TIMEOUT_SECONDS` | `2.5` | Sync HTTP timeout |
 
@@ -369,7 +411,10 @@ Django already re-checks Strapi every 120 seconds on live traffic. To also pull 
 | Frontend shows content but contact form fails | Django not running | Start `python manage.py runserver` in `backend/` |
 | Django logs `Content sync ... failed ... Connection refused` | Strapi not running | Start `npm run develop` in `strapi-cms/`; the site keeps serving cached content meanwhile |
 | Strapi admin shows empty Content Manager on a fresh install | Admin account not created yet | Open `/admin`, register the first administrator |
-| Edited content not appearing | Cache window | Wait ~2 minutes or run `python manage.py sync_content --force` |
+| Edited content not appearing | Cache window | Wait ~2 minutes, run `python manage.py sync_content --force`, or configure the webhook in 5.5 |
+| Unpublished/deleted entry still shows on the site | Webhook not configured + cache window not elapsed, or collection sync failing | Check the webhook (5.5) returns 200; run `python manage.py sync_content --force`; check backend logs for `Content sync ... failed` |
+| Webhook returns 401 | Header secret mismatch | Compare `X-Strapi-Webhook-Secret` in Strapi's webhook with the backend's `STRAPI_WEBHOOK_SECRET` (no quotes/whitespace) |
+| All entries of a collection were removed but the site still shows them | Deliberate safety guard: an empty Strapi collection never wipes live content | Keep at least one entry published, or delete the leftover rows in Django admin |
 | `better-sqlite3` install errors on Strapi boot | Native driver missing | `cd strapi-cms && npm install better-sqlite3@^12.2.0` |
 | CORS errors in the browser console | Frontend origin not whitelisted | Add the origin to `CORS_ALLOWED_ORIGINS` (backend) and `CORS_ORIGIN` (Strapi), then redeploy |
 | GA Realtime shows nothing | Measurement ID missing | Set `VITE_GA_MEASUREMENT_ID` and redeploy |

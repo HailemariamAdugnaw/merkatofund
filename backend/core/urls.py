@@ -8,5 +8,6 @@ urlpatterns = [
     path('settings/', views.site_settings),
     path('contact/', views.contact_create),
     path('events/', views.event_create),
+    path('webhooks/strapi', views.strapi_webhook),
     path('health/', views.health),
 ]

@@ -15,6 +15,7 @@ class ArticleSerializer(serializers.ModelSerializer):
             'subtitle',
             'highlight',
             'paragraphs',
+            'image',
         ]
 
 

@@ -107,5 +107,6 @@ REST_FRAMEWORK = {
 
 STRAPI_BASE_URL = os.environ.get('STRAPI_BASE_URL', 'http://localhost:1337').rstrip('/')
 STRAPI_API_TOKEN = os.environ.get('STRAPI_API_TOKEN', '')
+STRAPI_WEBHOOK_SECRET = os.environ.get('STRAPI_WEBHOOK_SECRET', '')
 CONTENT_SYNC_TTL_SECONDS = int(os.environ.get('CONTENT_SYNC_TTL_SECONDS', '120'))
 STRAPI_TIMEOUT_SECONDS = float(os.environ.get('STRAPI_TIMEOUT_SECONDS', '2.5'))

@@ -30,7 +30,12 @@
       "type": "text"
     },
     "image": {
-      "type": "string"
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
     },
     "stat_value": {
       "type": "string"

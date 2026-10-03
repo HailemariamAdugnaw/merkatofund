@@ -10,6 +10,7 @@ class SyncState(models.Model):
 
 
 class Article(models.Model):
+    document_id = models.CharField(max_length=64, blank=True, default='')
     order = models.PositiveIntegerField(unique=True)
     title = models.CharField(max_length=220)
     subtitle = models.CharField(max_length=260, blank=True)
@@ -18,6 +19,7 @@ class Article(models.Model):
     category = models.CharField(max_length=80, blank=True)
     highlight = models.TextField(blank=True)
     paragraphs = models.JSONField(default=list, blank=True)
+    image = models.CharField(max_length=400, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -28,6 +30,7 @@ class Article(models.Model):
 
 
 class HeroSlide(models.Model):
+    document_id = models.CharField(max_length=64, blank=True, default='')
     sort_order = models.PositiveIntegerField(default=0)
     eyebrow = models.CharField(max_length=140, blank=True)
     heading = models.CharField(max_length=220)

@@ -56,34 +56,107 @@ def _normalize_url(value):
     return cleaned
 
 
+def _resolve_media_url(value):
+    if isinstance(value, dict):
+        url = (value.get('url') or '').strip()
+        if not url:
+            return ''
+        if url.startswith('/'):
+            return f"{settings.STRAPI_BASE_URL.rstrip('/')}{url}"
+        return url
+    if isinstance(value, str):
+        return value.strip()
+    return ''
+
+
+def _document_id(item, attrs):
+    for source in (item, attrs):
+        if isinstance(source, dict):
+            value = str(source.get('documentId') or '').strip()
+            if value:
+                return value
+    return ''
+
+
+def _payload_total(payload):
+    meta = payload.get('meta') if isinstance(payload, dict) else None
+    pagination = meta.get('pagination') if isinstance(meta, dict) else None
+    if isinstance(pagination, dict):
+        try:
+            return int(pagination.get('total') or 0)
+        except (TypeError, ValueError):
+            return 0
+    return 0
+
+
+def _apply_fields(instance, defaults):
+    for field, value in defaults.items():
+        setattr(instance, field, value)
+    instance.save()
+
+
+def _prune_stale(model, seen_ids, items_count, total):
+    if items_count == 0 or not seen_ids:
+        return
+    if total > items_count:
+        logger.warning(
+            'Strapi reports %s entries but returned %s; skipping stale-entry deletion',
+            total,
+            items_count,
+        )
+        return
+    removed, _ = model.objects.exclude(document_id__in=seen_ids).delete()
+    if removed:
+        logger.info('Removed %s stale %s rows no longer published in Strapi', removed, model.__name__)
+
+
 def sync_articles():
     payload = _strapi_get(
         '/api/articles',
         {
             'sort': 'order:asc',
-            'publicationState': 'live',
+            'status': 'published',
             'pagination[pageSize]': 100,
+            'populate': 'image',
         },
     )
     items = payload.get('data', []) if isinstance(payload, dict) else []
+    seen_ids = []
     for item in items:
         attrs = _unwrap_attributes(item)
         title = attrs.get('title')
         if not title:
             continue
+        document_id = _document_id(item, attrs)
         order = attrs.get('order') or 0
-        Article.objects.update_or_create(
-            order=order,
-            defaults={
-                'title': title,
-                'subtitle': attrs.get('subtitle') or '',
-                'slug': attrs.get('slug') or f'article-{order}',
-                'nav_label': attrs.get('nav_label') or '',
-                'category': attrs.get('category') or f'Article {order}',
-                'highlight': attrs.get('highlight') or '',
-                'paragraphs': _split_paragraphs(attrs.get('body')),
-            },
-        )
+        defaults = {
+            'title': title,
+            'subtitle': attrs.get('subtitle') or '',
+            'slug': attrs.get('slug') or f'article-{order}',
+            'nav_label': attrs.get('nav_label') or '',
+            'category': attrs.get('category') or f'Article {order}',
+            'highlight': attrs.get('highlight') or '',
+            'paragraphs': _split_paragraphs(attrs.get('body')),
+            'image': _resolve_media_url(attrs.get('image')),
+        }
+        article = Article.objects.filter(document_id=document_id).first() if document_id else None
+        if article is None and document_id:
+            article = Article.objects.filter(document_id='', order=order).first()
+        if article is None:
+            try:
+                article = Article.objects.create(order=order, document_id=document_id, **defaults)
+            except Exception:
+                article = Article.objects.filter(order=order).first()
+                if article is None:
+                    raise
+                article.document_id = document_id
+                _apply_fields(article, defaults)
+        else:
+            article.document_id = document_id or article.document_id
+            _apply_fields(article, defaults)
+        if document_id:
+            seen_ids.append(document_id)
+    _prune_stale(Article, seen_ids, len(items), _payload_total(payload))
 
 
 def sync_hero_slides():
@@ -91,22 +164,28 @@ def sync_hero_slides():
         '/api/hero-slides',
         {
             'sort': 'sort_order:asc',
-            'publicationState': 'live',
+            'status': 'published',
             'pagination[pageSize]': 50,
+            'populate': 'image',
         },
     )
     items = payload.get('data', []) if isinstance(payload, dict) else []
+    seen_ids = []
     for index, item in enumerate(items):
         attrs = _unwrap_attributes(item)
         heading = attrs.get('heading')
         if not heading:
             continue
+        document_id = _document_id(item, attrs)
+        sort_order = attrs.get('sort_order')
+        if sort_order is None:
+            sort_order = index
         defaults = {
             'eyebrow': attrs.get('eyebrow') or '',
             'heading': heading,
             'accent': attrs.get('accent') or '',
             'body': attrs.get('body') or '',
-            'image': attrs.get('image') or '',
+            'image': _resolve_media_url(attrs.get('image')),
             'stat_value': attrs.get('stat_value') or '',
             'stat_label': attrs.get('stat_label') or '',
             'cta1_label': attrs.get('cta1_label') or '',
@@ -114,17 +193,24 @@ def sync_hero_slides():
             'cta2_label': attrs.get('cta2_label') or '',
             'cta2_href': attrs.get('cta2_href') or '',
         }
-        sort_order = attrs.get('sort_order')
-        if sort_order is None:
-            sort_order = index
-        HeroSlide.objects.update_or_create(
-            heading=heading,
-            defaults={'sort_order': sort_order, **defaults},
-        )
+        slide = HeroSlide.objects.filter(document_id=document_id).first() if document_id else None
+        if slide is None and document_id:
+            slide = HeroSlide.objects.filter(document_id='', heading=heading).first()
+        if slide is None and document_id:
+            slide = HeroSlide.objects.filter(document_id='', sort_order=sort_order).first()
+        if slide is None:
+            slide = HeroSlide.objects.create(sort_order=sort_order, document_id=document_id, **defaults)
+        else:
+            slide.document_id = document_id or slide.document_id
+            defaults['sort_order'] = sort_order
+            _apply_fields(slide, defaults)
+        if document_id:
+            seen_ids.append(document_id)
+    _prune_stale(HeroSlide, seen_ids, len(items), _payload_total(payload))
 
 
 def sync_settings():
-    payload = _strapi_get('/api/site-setting', {'publicationState': 'live'})
+    payload = _strapi_get('/api/site-setting', {'status': 'published'})
     entry = payload.get('data') if isinstance(payload, dict) else None
     attrs = _unwrap_attributes(entry)
     if not attrs:

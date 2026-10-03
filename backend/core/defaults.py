@@ -7,6 +7,7 @@ DEFAULT_ARTICLES = [
         'nav_label': 'Welcome',
         'category': 'Article 1',
         'highlight': 'Liquidity flows like a river through the heart of our community.',
+        'image': '/images/image1.jpg',
         'paragraphs': [
             'The Merkato Fund represents a seismic shift in how we perceive and interact with money in our daily lives. For too long, the financial landscape of Ethiopia has been divided into two extremes: the rigid, often inaccessible walls of traditional banking, and the informal, sometimes risky circles of neighborhood savings. We have built a bridge between these two worlds. The Merkato Fund is not just a financial product; it is a movement designed to empower the everyday citizen, the merchant, the teacher, and the dreamer. By leveraging modern technology and the principles of collective economics, we provide a platform where liquidity flows like a river through the heart of our community, ensuring that opportunity is never blocked by a lack of immediate capital.',
             'Our mission is simple yet profound: to create a sustainable, transparent, and inclusive financial ecosystem. We understand that in the bustling streets of Merkato or the quiet villages of the countryside, cash flow is the lifeblood of survival and growth. When we say "Hybrid Financial Ecosystem," we mean a system that respects our cultural traditions of saving together (Idir and Equb) but removes the volatility and waiting periods. We are introducing a structured mechanism where the collective power of the many creates immediate, life-changing benefits for the individual. This is more than just a fund; it is a promise that your financial future is secure, your daily needs are met, and your potential is limitless.',
@@ -20,6 +21,7 @@ DEFAULT_ARTICLES = [
         'nav_label': 'The Model',
         'category': 'Article 2',
         'highlight': 'One million members. Ten sectors. One central artery of liquidity.',
+        'image': '/images/image3.jpg',
         'paragraphs': [
             'To understand the Merkato Fund, one must look at the "Macro Engine" that drives our liquidity. We have designed a system based on the power of numbers and the reliability of small contributions. Imagine a massive machine composed of ten distinct sectors. Each of these sectors operates independently but feeds into the central artery of the Fund. By dividing our massive membership base into manageable, specialized units, we ensure that the administrative process is seamless and the payout structure is sustainable. This structure allows us to generate a massive volume of working capital that is constantly recycled back into the community, creating a perpetual cycle of financial support that benefits every single member.',
             "The magic of the Merkato Fund lies in the aggregation of resources. By bringing together one million members across these sectors, we create a pool of capital that has significant weight in the market. This aggregated fund is what allows us to offer liquidity on a scale never before seen in a community-based financial model. The system is designed to be self-sustaining; as new batches of members join and contribute, the fund's capacity to support long-term and short-term liquidity needs grows exponentially. It is a mathematical certainty that with transparency and discipline, this engine will continue to purr, providing 5 million Birr in daily liquidity to our members.",
@@ -33,6 +35,7 @@ DEFAULT_ARTICLES = [
         'nav_label': 'The Collective',
         'category': 'Article 3',
         'highlight': 'Responsibility, punctuality, and honesty are the currencies that hold our structure together.',
+        'image': '/images/image2.jpg',
         'paragraphs': [
             'While the Merkato Fund is powered by technology and financial strategy, its true heart lies with its members. Being a part of this fund is not a passive activity; it is a commitment to a social contract. Every member plays a crucial role in maintaining the health of the ecosystem. By honoring your daily contribution, you are not just investing in your own future; you are ensuring that the person next to you—perhaps a mother needing to buy inventory for her shop or a student paying for tuition—gets their chance on the next round. Responsibility, punctuality, and honesty are the currencies that hold our structure together.',
         ],
@@ -45,6 +48,7 @@ DEFAULT_ARTICLES = [
         'nav_label': '50 Birr Power',
         'category': 'Article 4',
         'highlight': 'Alone, 50 Birr buys a coffee. Pooled together, it becomes a life-changing force.',
+        'image': '/images/image2.jpg',
         'paragraphs': [
             'We often think that wealth accumulation requires large, lump-sum investments. The Merkato Fund challenges this myth with the "50 Birr Power." By breaking down the barrier to entry, we allow individuals from all walks of life to participate in a high-yield ecosystem. The daily contribution of 50 Birr is not a burden; it is a seed. When planted daily into the fertile ground of the Fund, that small amount leverages the collective power of 100,000 other members in your batch. Alone, 50 Birr might buy a cup of coffee and a snack. But pooled together? It becomes a life-changing force.',
             'This model democratizes access to capital. It means that the street vendor, the farmer, and the office worker can all stand on equal footing within the Fund. The "50 Birr Power" is a symbol of our inclusive philosophy. It proves that you do not need to be wealthy to access significant liquidity. You simply need consistency. By contributing just 50 Birr daily, members are essentially building a credit history and a savings account simultaneously, without the intimidating paperwork of a bank loan. This is financial empowerment in its purest form.',
@@ -58,6 +62,7 @@ DEFAULT_ARTICLES = [
         'nav_label': 'Transparency',
         'category': 'Article 5',
         'highlight': 'Access to capital is a right, not a privilege to be bought.',
+        'image': '/images/image1.jpg',
         'paragraphs': [
             'The Merkato Fund was born out of a frustration with current financial systems that often penalize the needy. We have explicitly designed our system to be "Not Equb, Not Lottery, and Not Bank." Unlike lotteries, where you pay for a dream that rarely materializes, or some traditional Equbs that require you to wait endlessly or pay hidden premiums, the Merkato Fund operates on a clear, fixed rule of liquidity. We do not support the exploitative model of "paying to get paid." There are no hidden fees, no surprise deductions, and no need to bribe your way to the front of the queue.',
             'Our system operates on a standardized, algorithmic basis. When it is your turn to receive the liquidity, you receive it in full, based on the terms agreed upon at your entry. We do not require members to make additional "processing payments" or "facilitation fees" to unlock their funds. The era of standing in lines or negotiating with brokers is over. The Merkato Fund is a dignified financial service. We believe that access to capital is a right, not a privilege to be bought. By removing the "pay to get paid" barrier, we restore dignity to the financial process.',
@@ -71,6 +76,7 @@ DEFAULT_ARTICLES = [
         'nav_label': 'Daily Liquidity',
         'category': 'Article 6',
         'highlight': 'Not just a pool of money — a relentless, reliable stream of income.',
+        'image': '/images/video-thumbnail.png',
         'paragraphs': [
             'What does 5 Million Birr in daily liquidity actually mean? It means small businesses can restock their shelves without waiting for a bank approval. It means families can handle medical emergencies with dignity. It means real estate deals can close faster. The Merkato Fund is setting a new standard for liquidity in Ethiopia. We are not just moving money; we are creating velocity. When money moves quickly and efficiently, it creates more opportunities for everyone. Our goal is to inject this 5 million Birr into the local economy every single day, creating a ripple effect of prosperity.',
             'This daily liquidity is the heartbeat of our organization. It requires a sophisticated back-end operation to manage, which is why we rely on a "Hybrid" approach—combining traditional trust networks with modern digital ledgers. As we scale, this daily figure will grow, further stabilizing the lives of our members. We are not just creating a pool of money; we are creating a stream of income. This stream is designed to be relentless and reliable, providing a safety net and a trampoline for those who wish to jump higher.',
@@ -84,6 +90,7 @@ DEFAULT_ARTICLES = [
         'nav_label': 'Join Us',
         'category': 'Article 7',
         'highlight': 'Together, we are building more than a fund — we are building a future.',
+        'image': '/images/video-thumbnail.png',
         'paragraphs': [
             'We believe in total transparency. That is why we have dedicated a space on our platform for a comprehensive video explanation of our product. We invite you to watch how the fund operates, how your money is managed, and how the daily liquidity is distributed. Seeing is believing, and our video content is designed to answer your most pressing questions. If you are still wondering how we differ from a bank or how the 50 Birr daily contribution fuels a 5 Million Birr payout, the answer is just a click away. We want you to be fully informed before you take this step.',
             'The Merkato Fund is a community, and like any community, we thrive on connection. We encourage all members and prospective members to follow us on our social media channels. It is here that we will post updates, share testimonials, and provide instant customer support. Whether you are on Facebook, Telegram, or TikTok, our digital doors are always open. Join the conversation, ask questions, and stay updated on the latest batches. Together, we are building more than a fund; we are building a future. Connect with us today and be part of the 5 Million Birr daily revolution.',

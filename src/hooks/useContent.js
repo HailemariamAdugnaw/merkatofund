@@ -18,10 +18,10 @@ export function useContent() {
           api.settings()
         ])
         if (!active) return
-        if (Array.isArray(articleData) && articleData.length > 0) {
+        if (Array.isArray(articleData)) {
           setArticles(articleData)
         }
-        if (Array.isArray(slideData) && slideData.length > 0) {
+        if (Array.isArray(slideData)) {
           setHeroSlides(slideData)
         }
         if (settingData && typeof settingData === 'object') {

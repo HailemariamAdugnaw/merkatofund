@@ -1,3 +1,9 @@
+import hmac
+import logging
+import threading
+import time
+
+from django.conf import settings
 from django.utils import timezone
 
 from rest_framework import status
@@ -13,6 +19,46 @@ from .serializers import (
     SiteSettingSerializer,
 )
 from .services import refresh_content
+
+logger = logging.getLogger(__name__)
+
+WEBHOOK_DEBOUNCE_SECONDS = 1.5
+_webhook_lock = threading.Lock()
+_last_webhook_at = 0.0
+
+
+def _run_webhook_sync():
+    time.sleep(0.4)
+    try:
+        errors = refresh_content(force=True)
+        if errors:
+            logger.warning('Webhook-triggered sync failed for: %s', ', '.join(errors))
+    except Exception as exc:
+        logger.warning('Webhook-triggered sync errored: %s', exc)
+
+
+@api_view(['POST'])
+def strapi_webhook(request):
+    expected = settings.STRAPI_WEBHOOK_SECRET
+    if not expected:
+        return Response(
+            {'detail': 'Webhook receiver is not configured (set STRAPI_WEBHOOK_SECRET)'},
+            status=status.HTTP_503_SERVICE_UNAVAILABLE,
+        )
+    provided = request.headers.get('X-Strapi-Webhook-Secret', '')
+    if not hmac.compare_digest(provided.encode('utf-8'), expected.encode('utf-8')):
+        return Response({'detail': 'Invalid webhook secret'}, status=status.HTTP_401_UNAUTHORIZED)
+    global _last_webhook_at
+    with _webhook_lock:
+        now = time.monotonic()
+        if now - _last_webhook_at < WEBHOOK_DEBOUNCE_SECONDS:
+            return Response({'status': 'debounced'})
+        _last_webhook_at = now
+    event = ''
+    if isinstance(request.data, dict):
+        event = str(request.data.get('event') or '')
+    threading.Thread(target=_run_webhook_sync, daemon=True).start()
+    return Response({'status': 'accepted', 'event': event})
 
 
 @api_view(['GET'])
