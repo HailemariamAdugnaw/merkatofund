@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon } from './Icons.jsx'
 import { trackEvent } from '../lib/analytics'
 
-const AUTOPLAY_MS = 6000
+const AUTOPLAY_MS = 3500
 const FADE_MS = 1200
 const SWIPE_THRESHOLD = 48
 
