@@ -72,6 +72,24 @@ class SiteSetting(models.Model):
         return self.site_name
 
 
+class AppDownload(models.Model):
+    document_id = models.CharField(max_length=64, blank=True, default='')
+    is_active = models.BooleanField(default=True)
+    menu_label = models.CharField(max_length=80, blank=True)
+    badge = models.CharField(max_length=120, blank=True)
+    arm64_label = models.CharField(max_length=80, blank=True)
+    arm64_file = models.CharField(max_length=400, blank=True)
+    arm64_store_url = models.CharField(max_length=400, blank=True)
+    legacy_label = models.CharField(max_length=80, blank=True)
+    legacy_file = models.CharField(max_length=400, blank=True)
+    legacy_store_url = models.CharField(max_length=400, blank=True)
+    note = models.CharField(max_length=260, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.menu_label or 'App Download'
+
+
 class ContactMessage(models.Model):
     name = models.CharField(max_length=160)
     email = models.EmailField()

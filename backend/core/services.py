@@ -5,8 +5,8 @@ import requests
 from django.conf import settings
 from django.utils import timezone
 
-from .defaults import DEFAULT_ARTICLES, DEFAULT_HERO_SLIDES, DEFAULT_SETTINGS
-from .models import Article, HeroSlide, SiteSetting, SyncState
+from .defaults import DEFAULT_APP_DOWNLOAD, DEFAULT_ARTICLES, DEFAULT_HERO_SLIDES, DEFAULT_SETTINGS
+from .models import AppDownload, Article, HeroSlide, SiteSetting, SyncState
 
 logger = logging.getLogger(__name__)
 
@@ -239,6 +239,37 @@ def sync_settings():
         site_setting.save()
 
 
+def sync_app_download():
+    payload = _strapi_get(
+        '/api/app-download',
+        {'status': 'published', 'populate': 'arm64_file,legacy_file'},
+    )
+    entry = payload.get('data') if isinstance(payload, dict) else None
+    attrs = _unwrap_attributes(entry)
+    if not attrs or not attrs.get('menu_label'):
+        AppDownload.objects.all().delete()
+        return
+    document_id = _document_id(entry or {}, attrs)
+    defaults = {
+        'is_active': attrs.get('is_active') is not False,
+        'menu_label': attrs.get('menu_label'),
+        'badge': attrs.get('badge') or '',
+        'arm64_label': attrs.get('arm64_label') or 'Modern Phones (arm64)',
+        'arm64_file': _resolve_media_url(attrs.get('arm64_file')),
+        'arm64_store_url': _normalize_url(attrs.get('arm64_store_url')),
+        'legacy_label': attrs.get('legacy_label') or 'Older Devices (Legacy 32-bit)',
+        'legacy_file': _resolve_media_url(attrs.get('legacy_file')),
+        'legacy_store_url': _normalize_url(attrs.get('legacy_store_url')),
+        'note': attrs.get('note') or '',
+    }
+    app_download = AppDownload.objects.first()
+    if app_download is None:
+        AppDownload.objects.create(document_id=document_id, **defaults)
+    else:
+        app_download.document_id = document_id or app_download.document_id
+        _apply_fields(app_download, defaults)
+
+
 def seed_default_content():
     if Article.objects.count() == 0:
         for article in DEFAULT_ARTICLES:
@@ -248,6 +279,8 @@ def seed_default_content():
             HeroSlide.objects.create(**slide)
     if SiteSetting.objects.count() == 0:
         SiteSetting.objects.create(**DEFAULT_SETTINGS)
+    if AppDownload.objects.count() == 0:
+        AppDownload.objects.create(**DEFAULT_APP_DOWNLOAD)
 
 
 def refresh_content(force=False):
@@ -255,6 +288,7 @@ def refresh_content(force=False):
         Article.objects.count() == 0
         and HeroSlide.objects.count() == 0
         and SiteSetting.objects.count() == 0
+        and AppDownload.objects.count() == 0
     ):
         seed_default_content()
     tasks = []
@@ -263,6 +297,7 @@ def refresh_content(force=False):
             ('articles', sync_articles),
             ('hero_slides', sync_hero_slides),
             ('settings', sync_settings),
+            ('app_download', sync_app_download),
         ]
     errors = []
     for key, task in tasks:

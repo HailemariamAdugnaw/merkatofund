@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="band" x1="0" y1="0" x2="1200" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD700" stop-opacity="0.15"/>
+      <stop offset="0.5" stop-color="#FFD700" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#FFA500" stop-opacity="0.15"/>
+    </linearGradient>
+    <linearGradient id="coin" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#FFE066"/>
+      <stop offset="0.5" stop-color="#FFD700"/>
+      <stop offset="1" stop-color="#FFA500"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#FDF5E6"/>
+  <rect x="0" y="288" width="1200" height="54" fill="url(#band)"/>
+  <text x="600" y="200" text-anchor="middle" font-family="Georgia, serif" font-size="64" font-weight="bold" fill="#3E2723">The Merkato Fund</text>
+  <text x="600" y="330" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" letter-spacing="8" fill="#B8860B">5 MILLION BIRR DAILY LIQUIDITY</text>
+  <text x="600" y="404" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#5D4037">A Hybrid Financial Ecosystem for Everyday Ethiopia</text>
+  <text x="600" y="446" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-style="italic" fill="#8D6E63">Not Equb. Not Lottery. Not Bank.</text>
+  <circle cx="600" cy="530" r="34" fill="url(#coin)"/>
+  <path d="M583 544V522l9 13 8-13v22" stroke="#3E2723" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

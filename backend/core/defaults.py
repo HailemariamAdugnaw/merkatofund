@@ -62,7 +62,7 @@ DEFAULT_ARTICLES = [
         'nav_label': 'Transparency',
         'category': 'Article 5',
         'highlight': 'Access to capital is a right, not a privilege to be bought.',
-        'image': '/images/image5.jpg',
+        'image': '/images/image1.jpg',
         'paragraphs': [
             'The Merkato Fund was born out of a frustration with current financial systems that often penalize the needy. We have explicitly designed our system to be "Not Equb, Not Lottery, and Not Bank." Unlike lotteries, where you pay for a dream that rarely materializes, or some traditional Equbs that require you to wait endlessly or pay hidden premiums, the Merkato Fund operates on a clear, fixed rule of liquidity. We do not support the exploitative model of "paying to get paid." There are no hidden fees, no surprise deductions, and no need to bribe your way to the front of the queue.',
             'Our system operates on a standardized, algorithmic basis. When it is your turn to receive the liquidity, you receive it in full, based on the terms agreed upon at your entry. We do not require members to make additional "processing payments" or "facilitation fees" to unlock their funds. The era of standing in lines or negotiating with brokers is over. The Merkato Fund is a dignified financial service. We believe that access to capital is a right, not a privilege to be bought. By removing the "pay to get paid" barrier, we restore dignity to the financial process.',
@@ -76,7 +76,7 @@ DEFAULT_ARTICLES = [
         'nav_label': 'Daily Liquidity',
         'category': 'Article 6',
         'highlight': 'Not just a pool of money — a relentless, reliable stream of income.',
-        'image': '/images/image6.jpg',
+        'image': '/images/video-thumbnail.png',
         'paragraphs': [
             'What does 5 Million Birr in daily liquidity actually mean? It means small businesses can restock their shelves without waiting for a bank approval. It means families can handle medical emergencies with dignity. It means real estate deals can close faster. The Merkato Fund is setting a new standard for liquidity in Ethiopia. We are not just moving money; we are creating velocity. When money moves quickly and efficiently, it creates more opportunities for everyone. Our goal is to inject this 5 million Birr into the local economy every single day, creating a ripple effect of prosperity.',
             'This daily liquidity is the heartbeat of our organization. It requires a sophisticated back-end operation to manage, which is why we rely on a "Hybrid" approach—combining traditional trust networks with modern digital ledgers. As we scale, this daily figure will grow, further stabilizing the lives of our members. We are not just creating a pool of money; we are creating a stream of income. This stream is designed to be relentless and reliable, providing a safety net and a trampoline for those who wish to jump higher.',
@@ -90,7 +90,7 @@ DEFAULT_ARTICLES = [
         'nav_label': 'Join Us',
         'category': 'Article 7',
         'highlight': 'Together, we are building more than a fund — we are building a future.',
-        'image': '/images/image7.jpg',
+        'image': '/images/video-thumbnail.png',
         'paragraphs': [
             'We believe in total transparency. That is why we have dedicated a space on our platform for a comprehensive video explanation of our product. We invite you to watch how the fund operates, how your money is managed, and how the daily liquidity is distributed. Seeing is believing, and our video content is designed to answer your most pressing questions. If you are still wondering how we differ from a bank or how the 50 Birr daily contribution fuels a 5 Million Birr payout, the answer is just a click away. We want you to be fully informed before you take this step.',
             'The Merkato Fund is a community, and like any community, we thrive on connection. We encourage all members and prospective members to follow us on our social media channels. It is here that we will post updates, share testimonials, and provide instant customer support. Whether you are on Facebook, Telegram, or TikTok, our digital doors are always open. Join the conversation, ask questions, and stay updated on the latest batches. Together, we are building more than a fund; we are building a future. Connect with us today and be part of the 5 Million Birr daily revolution.',
@@ -157,4 +157,17 @@ DEFAULT_SETTINGS = {
     'instagram_url': 'https://instagram.com/merkato.fund',
     'footer_about': 'A hybrid financial ecosystem that respects our traditions of saving together — rebuilt with modern technology for a new dawn of daily liquidity.',
     'footer_legal': 'The Merkato Fund operates on a clear, fixed rule of liquidity. Read all seven articles before joining.',
+}
+
+DEFAULT_APP_DOWNLOAD = {
+    'is_active': True,
+    'menu_label': 'Download App',
+    'badge': 'Beta',
+    'arm64_label': 'Modern Phones (arm64)',
+    'arm64_file': '/downloads/merkato-fund-arm64-placeholder.apk',
+    'arm64_store_url': '',
+    'legacy_label': 'Older Devices (Legacy 32-bit)',
+    'legacy_file': '/downloads/merkato-fund-legacy32-placeholder.apk',
+    'legacy_store_url': '',
+    'note': 'Placeholder APK builds — the app is not yet on Google Play. Store links activate automatically once published.',
 }

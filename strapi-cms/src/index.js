@@ -141,12 +141,25 @@ const siteSettingSeed = {
   footer_legal: 'The Merkato Fund operates on a clear, fixed rule of liquidity. Read all seven articles before joining.',
 }
 
+const appDownloadSeed = {
+  is_active: true,
+  menu_label: 'Download App',
+  badge: 'Beta',
+  arm64_label: 'Modern Phones (arm64)',
+  arm64_store_url: '',
+  legacy_label: 'Older Devices (Legacy 32-bit)',
+  legacy_store_url: '',
+  note: 'Placeholder APK builds — the app is not yet on Google Play. Store links activate automatically once published.',
+}
+
 const PUBLIC_READ_ACTIONS = [
   'api::article.article.find',
   'api::article.article.findOne',
   'api::hero-slide.hero-slide.find',
   'api::hero-slide.hero-slide.findOne',
   'api::site-setting.site-setting.find',
+  'api::app-download.app-download.find',
+  'api::app-download.app-download.findOne',
 ]
 
 async function seedArticles(strapi) {
@@ -189,6 +202,18 @@ async function seedSiteSetting(strapi) {
   strapi.log.info('Seeded default site settings')
 }
 
+async function seedAppDownload(strapi) {
+  const existing = await strapi.documents('api::app-download.app-download').count({})
+  if (existing > 0) {
+    return
+  }
+  await strapi.documents('api::app-download.app-download').create({
+    data: { ...appDownloadSeed },
+    status: 'published',
+  })
+  strapi.log.info('Seeded default app download section')
+}
+
 async function enablePublicRead(strapi) {
   const role = await strapi.db
     .query('plugin::users-permissions.role')
@@ -219,6 +244,7 @@ module.exports = {
       await seedArticles(strapi)
       await seedHeroSlides(strapi)
       await seedSiteSetting(strapi)
+      await seedAppDownload(strapi)
       await enablePublicRead(strapi)
       strapi.log.info('Merkato Fund CMS bootstrap completed')
     } catch (error) {

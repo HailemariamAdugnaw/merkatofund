@@ -10,14 +10,16 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import Article, ContactMessage, HeroSlide, SiteSetting
+from .models import AppDownload, Article, ContactMessage, HeroSlide, SiteSetting
 from .serializers import (
+    AppDownloadSerializer,
     ArticleSerializer,
     ContactMessageSerializer,
     EngagementEventSerializer,
     HeroSlideSerializer,
     SiteSettingSerializer,
 )
+from .defaults import DEFAULT_APP_DOWNLOAD
 from .services import refresh_content
 
 logger = logging.getLogger(__name__)
@@ -80,6 +82,15 @@ def site_settings(request):
     refresh_content()
     site_setting = SiteSetting.objects.first()
     return Response(SiteSettingSerializer(site_setting).data)
+
+
+@api_view(['GET'])
+def app_download(request):
+    refresh_content()
+    entry = AppDownload.objects.first()
+    if entry is None:
+        entry = AppDownload.objects.create(**DEFAULT_APP_DOWNLOAD)
+    return Response(AppDownloadSerializer(entry).data)
 
 
 @api_view(['POST'])

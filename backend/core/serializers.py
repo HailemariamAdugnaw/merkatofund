@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Article, ContactMessage, EngagementEvent, HeroSlide, SiteSetting
+from .models import AppDownload, Article, ContactMessage, EngagementEvent, HeroSlide, SiteSetting
 
 
 class ArticleSerializer(serializers.ModelSerializer):
@@ -55,6 +55,23 @@ class SiteSettingSerializer(serializers.ModelSerializer):
             'instagram_url',
             'footer_about',
             'footer_legal',
+        ]
+
+
+class AppDownloadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AppDownload
+        fields = [
+            'is_active',
+            'menu_label',
+            'badge',
+            'arm64_label',
+            'arm64_file',
+            'arm64_store_url',
+            'legacy_label',
+            'legacy_file',
+            'legacy_store_url',
+            'note',
         ]
 
 

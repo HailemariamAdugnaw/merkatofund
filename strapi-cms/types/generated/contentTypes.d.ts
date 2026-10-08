@@ -443,6 +443,48 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiAppDownloadAppDownload extends Struct.SingleTypeSchema {
+  collectionName: 'app_downloads';
+  info: {
+    description: 'Download App dropdown in the navigation menu: placeholder APK files now, store links later';
+    displayName: 'App Download (Navbar)';
+    pluralName: 'app-downloads';
+    singularName: 'app-download';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    arm64_file: Schema.Attribute.Media<'files'>;
+    arm64_label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Modern Phones (arm64)'>;
+    arm64_store_url: Schema.Attribute.String;
+    badge: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    legacy_file: Schema.Attribute.Media<'files'>;
+    legacy_label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Older Devices (Legacy 32-bit)'>;
+    legacy_store_url: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::app-download.app-download'
+    > &
+      Schema.Attribute.Private;
+    menu_label: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'Download App'>;
+    note: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
   collectionName: 'articles';
   info: {
@@ -1085,6 +1127,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::app-download.app-download': ApiAppDownloadAppDownload;
       'api::article.article': ApiArticleArticle;
       'api::hero-slide.hero-slide': ApiHeroSlideHeroSlide;
       'api::site-setting.site-setting': ApiSiteSettingSiteSetting;
